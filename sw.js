@@ -1,6 +1,6 @@
 // Service worker : permet à l'app de s'ouvrir même sans réseau.
 // Change CACHE à chaque mise en ligne d'une nouvelle version.
-const CACHE = 'powa-v2';
+const CACHE = 'powa-v3';
 const SHELL = [
   './',
   './index.html',

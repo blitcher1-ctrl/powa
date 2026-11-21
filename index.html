@@ -50,10 +50,35 @@ body::before{
 button{font:inherit;color:inherit;cursor:pointer}
 button:focus-visible,input:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
 
-.app{max-width:480px;margin:0 auto;padding:calc(var(--safe-t) + 10px) 16px calc(var(--safe-b) + 44px);
+.app{max-width:480px;margin:0 auto;padding:calc(var(--safe-t) + 10px) 16px calc(var(--safe-b) + 116px);
   transition:filter .6s,transform .6s var(--ease)}
 body.is-wasted .app{filter:grayscale(1) brightness(.45) contrast(1.15);transform:scale(1.04);
   transition:filter .45s,transform 2.8s cubic-bezier(.2,.6,.2,1)}
+body.is-wasted .tabbar,body.monk-on .tabbar{filter:grayscale(1) brightness(.42);pointer-events:none}
+body.monk-on .tabbar{filter:grayscale(1) brightness(.42) blur(1.5px)}
+
+/* ---------- Onglets ---------- */
+.tab-panel[hidden]{display:none}
+.tab-panel.tab-in{animation:tabIn .38s var(--ease)}
+@keyframes tabIn{from{opacity:0;transform:translateY(12px)}}
+.page-head{margin:6px 2px 4px}
+.page-head h1{margin:0;font-family:var(--display);font-weight:400;font-size:34px;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.page-head h1 em{font-style:normal;background:var(--sunset);-webkit-background-clip:text;background-clip:text;color:transparent}
+.page-head p{margin:6px 0 0;font-size:13.5px;color:var(--muted)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;padding:10px 16px calc(var(--safe-b) + 10px);
+  background:linear-gradient(180deg,rgba(11,8,18,0),rgba(11,8,18,.9) 40%);pointer-events:none;transition:filter .6s}
+.tabbar-in{pointer-events:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:4px;width:100%;max-width:448px;padding:6px;border-radius:24px;
+  border:1px solid var(--line);background:rgba(22,15,32,.84);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);box-shadow:0 20px 40px -16px rgba(0,0,0,.8)}
+.tab-btn{position:relative;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px 7px;border:0;border-radius:18px;background:none;
+  color:var(--dim);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;transition:color .2s,background .3s,transform .2s var(--spring)}
+.tab-btn:active{transform:scale(.92)}
+.tab-btn svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .35s var(--spring)}
+.tab-btn.active{color:var(--text);background:linear-gradient(135deg,rgba(255,61,139,.22),rgba(255,160,74,.12))}
+.tab-btn.active svg{color:#ffb07a;transform:translateY(-1px) scale(1.1)}
+.tab-btn .dot{position:absolute;top:6px;left:calc(50% + 8px);width:9px;height:9px;border-radius:50%;background:var(--pink);box-shadow:0 0 0 2px #16101f;display:none;animation:bump 1.6s var(--spring) infinite}
+.tab-btn.has-dot .dot{display:block}
+#tab-ach .sec-head{margin-top:6px}
+#tab-ach .sec-head h2{font-size:34px;letter-spacing:.04em}
 
 /* ---------- Header ---------- */
 .top{display:flex;align-items:center;justify-content:space-between;gap:10px;height:52px;margin-bottom:8px}
@@ -73,13 +98,15 @@ body.is-wasted .app{filter:grayscale(1) brightness(.45) contrast(1.15);transform
 .icon-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}
 
 /* ---------- Hero ---------- */
-.hero{position:relative;aspect-ratio:1/1;border-radius:30px;overflow:hidden;isolation:isolate;
+.hero{position:relative;aspect-ratio:4/5;border-radius:30px;overflow:hidden;isolation:isolate;background:#0b0812;
   box-shadow:0 34px 70px -34px rgba(255,61,139,.55),inset 0 0 0 1px rgba(255,255,255,.06)}
+.scene-img{position:absolute;left:0;top:0;width:100%;aspect-ratio:1/1;object-fit:cover;z-index:-2;display:block;
+  transform-origin:50% 62%;animation:kenburns 38s ease-in-out infinite alternate}
+@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.07)}}
+.hero-fade{position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,rgba(11,8,18,.35) 0%,rgba(11,8,18,0) 16%,rgba(11,8,18,0) 50%,rgba(11,8,18,.55) 66%,rgba(11,8,18,.92) 80%,#0b0812 92%)}
 .hero.shake{animation:shake .5s}
 @keyframes shake{10%,90%{transform:translateX(-2px)}20%,80%{transform:translateX(4px)}30%,50%,70%{transform:translateX(-7px)}40%,60%{transform:translateX(7px)}}
-.hero svg.scene{position:absolute;inset:0;width:100%;height:100%;z-index:-1;display:block}
-.sun-g{animation:sunBreath 7s ease-in-out infinite}
-@keyframes sunBreath{50%{transform:translateY(3px)}}
 .counters{position:absolute;left:0;right:0;bottom:24px;display:grid;grid-template-columns:1fr 1px 1fr;align-items:end}
 .vdiv{height:78%;align-self:center;background:linear-gradient(180deg,transparent,rgba(255,255,255,.2),transparent)}
 .ctr{text-align:center;padding:0 6px;min-width:0}
@@ -450,83 +477,12 @@ button.card:active{transform:scale(.985);background:var(--card-hi)}
     </div>
   </header>
 
+  <!-- ============ ONGLET ACCUEIL ============ -->
+  <div class="tab-panel" id="tab-home" data-tab="home" role="tabpanel" aria-labelledby="tb-home">
+
   <section class="hero" id="hero" aria-label="Compteurs">
-    <svg class="scene" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-      <defs>
-        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#140a29"/>
-          <stop offset=".34" stop-color="#3b1157"/>
-          <stop offset=".62" stop-color="#992370"/>
-          <stop offset=".83" stop-color="#ee4d6d"/>
-          <stop offset="1" stop-color="#ff9a52"/>
-        </linearGradient>
-        <linearGradient id="sun" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#ffe9a6"/>
-          <stop offset=".55" stop-color="#ff9a5a"/>
-          <stop offset="1" stop-color="#ff3d7f"/>
-        </linearGradient>
-        <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#2c0f34"/>
-          <stop offset=".45" stop-color="#150b20"/>
-          <stop offset="1" stop-color="#0b0812"/>
-        </linearGradient>
-        <radialGradient id="glow" cx="200" cy="168" r="190" gradientUnits="userSpaceOnUse">
-          <stop offset="0" stop-color="#ff7a5c" stop-opacity=".6"/>
-          <stop offset="1" stop-color="#ff7a5c" stop-opacity="0"/>
-        </radialGradient>
-        <radialGradient id="seaGlow" cx="200" cy="172" r="120" gradientUnits="userSpaceOnUse" gradientTransform="matrix(1 0 0 .35 0 112)">
-          <stop offset="0" stop-color="#ff5a7a" stop-opacity=".35"/>
-          <stop offset="1" stop-color="#ff5a7a" stop-opacity="0"/>
-        </radialGradient>
-        <clipPath id="above"><rect width="400" height="168"/></clipPath>
-        <mask id="cuts" maskUnits="userSpaceOnUse" x="0" y="0" width="400" height="400">
-          <rect width="400" height="400" fill="#fff"/>
-          <rect y="128" width="400" height="2" fill="#000"/>
-          <rect y="138" width="400" height="3" fill="#000"/>
-          <rect y="148" width="400" height="4" fill="#000"/>
-          <rect y="158" width="400" height="5" fill="#000"/>
-        </mask>
-        <g id="palm">
-          <path d="M-4 0C2 90-6 200-26 360h14C6 200 10 90 4 0Z"/>
-          <path d="M0 0C30-22 72-20 96 12 70-6 34-6 0 6Z"/>
-          <path d="M0 0C-30-22-72-20-96 12-70-6-34-6 0 6Z"/>
-          <path d="M0 0C14-30 40-48 68-50 42-40 22-22 4 4Z"/>
-          <path d="M0 0C-14-30-40-48-68-50-42-40-22-22-4 4Z"/>
-          <path d="M0 2C28 6 52 28 60 62 44 36 24 18-2 8Z"/>
-          <path d="M0 2C-28 6-52 28-60 62-44 36-24 18 2 8Z"/>
-          <path d="M0 0C-4-26 4-50 20-66 10-46 6-24 4 2Z"/>
-          <circle cx="-4" cy="7" r="4"/><circle cx="4" cy="9" r="4"/>
-        </g>
-        <linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0" stop-color="#0b0812" stop-opacity="0"/>
-          <stop offset="1" stop-color="#0b0812" stop-opacity=".75"/>
-        </linearGradient>
-      </defs>
-      <rect width="400" height="168" fill="url(#sky)"/>
-      <g fill="#fff">
-        <circle cx="38" cy="24" r="1" opacity=".55"/><circle cx="92" cy="52" r=".8" opacity=".4"/>
-        <circle cx="146" cy="18" r=".9" opacity=".5"/><circle cx="214" cy="40" r=".7" opacity=".35"/>
-        <circle cx="262" cy="14" r="1" opacity=".5"/><circle cx="318" cy="46" r=".8" opacity=".4"/>
-        <circle cx="366" cy="22" r=".9" opacity=".5"/><circle cx="182" cy="70" r=".6" opacity=".25"/>
-      </g>
-      <rect width="400" height="168" fill="url(#glow)"/>
-      <g clip-path="url(#above)"><g class="sun-g"><circle cx="200" cy="168" r="72" fill="url(#sun)" mask="url(#cuts)"/></g></g>
-      <rect y="168" width="400" height="232" fill="url(#sea)"/>
-      <rect y="168" width="400" height="90" fill="url(#seaGlow)"/>
-      <g fill="#ff8a62">
-        <rect x="134" y="172" width="132" height="2" rx="1" opacity=".55"/>
-        <rect x="150" y="180" width="100" height="2" rx="1" opacity=".42"/>
-        <rect x="165" y="189" width="70" height="1.6" rx=".8" opacity=".3"/>
-        <rect x="178" y="199" width="44" height="1.4" rx=".7" opacity=".2"/>
-        <rect x="189" y="210" width="22" height="1.2" rx=".6" opacity=".13"/>
-      </g>
-      <rect y="167.5" width="400" height="1" fill="#ffb27a" opacity=".55"/>
-      <rect y="236" width="400" height="164" fill="url(#fade)"/>
-      <g fill="#0b0812">
-        <use href="#palm" transform="translate(44 98) scale(.95)"/>
-        <use href="#palm" transform="translate(358 128) scale(-.74 .74)"/>
-      </g>
-    </svg>
+    <img class="scene-img" src="img/zen.jpg" alt="" aria-hidden="true" decoding="async">
+    <div class="hero-fade" aria-hidden="true"></div>
 
     <div class="counters">
       <div class="ctr" data-kind="tabac">
@@ -567,17 +523,6 @@ button.card:active{transform:scale(.985);background:var(--card-hi)}
     </button>
   </div>
 
-  <div class="radio" id="radio">
-    <button class="radio-bar" id="radioBtn" type="button" aria-label="Lancer le thème principal">
-      <span class="r-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-      <span class="r-txt"><b>Radio Powa</b><small id="radioSub">Thème principal · touche pour lancer</small></span>
-      <span class="r-play" aria-hidden="true">
-        <svg class="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z"/></svg>
-        <svg class="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
-      </span>
-    </button>
-    <div class="radio-player" id="radioPlayer" hidden></div>
-  </div>
 
   <!-- Rang -->
   <button class="card rank" id="rankCard" type="button" aria-label="Voir tous les rangs">
@@ -601,6 +546,24 @@ button.card:active{transform:scale(.985);background:var(--card-hi)}
     </span>
     <span class="qt" id="quoteText"></span>
   </button>
+
+  <div class="radio" id="radio">
+    <button class="radio-bar" id="radioBtn" type="button" aria-label="Lancer le thème principal">
+      <span class="r-eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="r-txt"><b>Radio Powa</b><small id="radioSub">Thème principal · touche pour lancer</small></span>
+      <span class="r-play" aria-hidden="true">
+        <svg class="i-play" viewBox="0 0 24 24"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12-7.5a1 1 0 0 0 0-1.72l-12-7.5A1 1 0 0 0 7 4.5Z"/></svg>
+        <svg class="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+      </span>
+    </button>
+    <div class="radio-player" id="radioPlayer" hidden></div>
+  </div>
+
+  </div>
+
+  <!-- ============ ONGLET BILAN ============ -->
+  <div class="tab-panel" id="tab-progress" data-tab="progress" role="tabpanel" aria-labelledby="tb-progress" hidden>
+  <div class="page-head"><h1>Ton <em>bilan</em></h1><p>Argent, santé et missions du jour.</p></div>
 
   <!-- Argent -->
   <button class="card money" id="moneyCard" type="button" aria-label="Argent économisé">
@@ -641,6 +604,10 @@ button.card:active{transform:scale(.985);background:var(--card-hi)}
     <p class="empty" id="todoEmpty" hidden>Aucune mission. Même un Loser a des objectifs.</p>
   </section>
 
+  </div>
+
+  <!-- ============ ONGLET SUCCÈS ============ -->
+  <div class="tab-panel" id="tab-ach" data-tab="ach" role="tabpanel" aria-labelledby="tb-ach" hidden>
   <!-- Succès -->
   <section aria-labelledby="achTitle">
     <div class="sec-head">
@@ -653,7 +620,24 @@ button.card:active{transform:scale(.985);background:var(--card-hi)}
     <div class="ach-grid" id="achGrid"></div>
   </section>
 
+  </div>
+
 </main>
+
+<nav class="tabbar" aria-label="Navigation">
+  <div class="tabbar-in" role="tablist">
+    <button class="tab-btn active" id="tb-home" type="button" role="tab" aria-selected="true" aria-controls="tab-home" data-tab="home">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20a1 1 0 0 1-1 1H15v-6H9v6H4.5a1 1 0 0 1-1-1Z"/></svg>Accueil
+    </button>
+    <button class="tab-btn" id="tb-progress" type="button" role="tab" aria-selected="false" aria-controls="tab-progress" data-tab="progress">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6.5 16v-4M12 16V6M17.5 16v-7"/></svg>Bilan
+    </button>
+    <button class="tab-btn" id="tb-ach" type="button" role="tab" aria-selected="false" aria-controls="tab-ach" data-tab="ach">
+      <span class="dot" aria-hidden="true"></span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0Z"/><path d="M17 6h3v1a3 3 0 0 1-3 3M7 6H4v1a3 3 0 0 0 3 3"/></svg>Succès
+    </button>
+  </div>
+</nav>
 
 <!-- Panneau du bas (réglages / rangs / santé) -->
 <div class="sheet-wrap" id="sheet" hidden>
@@ -986,6 +970,7 @@ button.card:active{transform:scale(.985);background:var(--card-hi)}
   state.money = state.money || { price: 12.5, perDay: 10 };
   state.stats = Object.assign({ missions: Math.max(0, Math.round((state.taskPoints || 0) / TASK_PTS)), phrases: 0, perfect: 0, perfectDay: null, soundToggles: 0, motiv: 0 }, state.stats || {});
   state.ach = state.ach || {};
+  if (typeof state.achSeen !== 'number') state.achSeen = Object.keys(state.ach).length;
   if (!state.video || state.video === '53CWciXkScM') { state.video = DEFAULT_VIDEO; state.videoVertical = false; }  // ancien choix : vidéo soumise à limite d'âge, non intégrable
   state.radio = state.radio || DEFAULT_RADIO;
   state.monk = state.monk || null;
@@ -1447,6 +1432,13 @@ button.card:active{transform:scale(.985);background:var(--card-hi)}
       achGrid.appendChild(b);
     });
     $('#achCount').textContent = `${Object.keys(state.ach).filter(id => ACH.some(a => a.id === id)).length}/${ACH.length}`;
+    updateAchDot();
+  }
+  function updateAchDot() {
+    const n = Object.keys(state.ach).length;
+    const onAch = !document.getElementById('tab-ach').hidden;
+    if (onAch && n !== state.achSeen) { state.achSeen = n; save(); }
+    document.getElementById('tb-ach').classList.toggle('has-dot', n > state.achSeen);
   }
   achGrid.addEventListener('click', e => {
     const b = e.target.closest('.ach');
@@ -1912,6 +1904,27 @@ button.card:active{transform:scale(.985);background:var(--card-hi)}
   }
   $('#monkBtn').addEventListener('click', monkStart);
   $('#monkOff').addEventListener('click', monkStop);
+
+  /* ===================================================================
+     ONGLETS
+     =================================================================== */
+  const tabBtns = document.querySelectorAll('.tab-btn'), tabPanels = document.querySelectorAll('.tab-panel');
+  function showTab(name) {
+    let changed = false;
+    tabPanels.forEach(p => {
+      const on = p.dataset.tab === name;
+      if (on && p.hidden) { p.hidden = false; bump(p, 'tab-in'); changed = true; }
+      else if (!on) p.hidden = true;
+    });
+    tabBtns.forEach(b => {
+      const on = b.dataset.tab === name;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    if (changed) { window.scrollTo(0, 0); Sfx.play('tap'); }
+    updateAchDot();
+  }
+  tabBtns.forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
 
   /* ===================================================================
      DÉMARRAGE
